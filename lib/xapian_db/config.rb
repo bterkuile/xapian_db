@@ -44,13 +44,20 @@ module XapianDb
         return default_url if @config.nil?
         @config.instance_variable_get("@_beanstalk_daemon_url") || default_url
       end
+
+      # The beanstalk tube
+      define_method :beanstalk_tube do
+        default_tube = :default
+        return default_tube if @config.nil?
+        @config.instance_variable_get("@_beanstalk_tube") || default_tube
+      end
     end
 
     # ---------------------------------------------------------------------------------
     # DSL methods
     # ---------------------------------------------------------------------------------
 
-    attr_reader :_database, :_adapter, :_writer, :_beanstalk_daemon, :_stemmer, :_stopper
+    attr_reader :_database, :_adapter, :_writer, :_beanstalk_daemon, :_stemmer, :_stopper, :_beanstalk_tube
 
     # Set the global database to use
     # @param [String] path The path to the database. Either apply a file sytem path or :memory
@@ -111,6 +118,12 @@ module XapianDb
       lang ||= :none
       @_stemmer = XapianDb::Repositories::Stemmer.stemmer_for lang
       @_stopper = lang == :none ? nil : XapianDb::Repositories::Stopper.stopper_for(lang)
+    end
+
+    # Set the beanstalk tube. This can be considered as a communication namespace
+    # @param [Symbol] the name of the tube; defaults to :default
+    def beanstalk_tube(tube)
+      @_beanstalk_tube = tube
     end
 
   end

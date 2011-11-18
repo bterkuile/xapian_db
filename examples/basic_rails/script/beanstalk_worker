@@ -20,6 +20,7 @@ module XapianDb
       url = XapianDb::Config.beanstalk_daemon_url
       beanstalk = Beanstalk::Pool.new([url])
       worker    = XapianDb::IndexWriters::BeanstalkWorker.new
+      beanstalk.watch XapianDb::Config.beanstalk_tube
       Rails.logger.info "XapianDb beanstalk worker: ready"
 
       loop do

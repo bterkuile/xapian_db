@@ -42,6 +42,7 @@ module XapianDb
         config.adapter @adapter.try(:to_sym)
         config.writer @writer.try(:to_sym)
         config.beanstalk_daemon_url @beanstalk_daemon
+        config.beanstalk_tube = @beanstalk_tube
         config.language @language.try(:to_sym)
       end
 
@@ -62,6 +63,7 @@ module XapianDb
       @adapter          = env_config["adapter"]  || :active_record
       @writer           = env_config["writer"]   || :direct
       @beanstalk_daemon = env_config["beanstalk_daemon"]
+      @beanstalk_tube   = env_config["beanstalk_tube"]
       @language         = env_config["language"]
     end
 
@@ -71,6 +73,7 @@ module XapianDb
       @adapter          = :active_record
       @writer           = :direct
       @beanstalk_daemon = nil
+      @beanstalk_tube   = :default
     end
 
   end

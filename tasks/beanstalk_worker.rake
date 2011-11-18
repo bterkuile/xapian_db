@@ -18,6 +18,7 @@ namespace :xapian_db do
     url = XapianDb::Config.beanstalk_daemon_url
     beanstalk = Beanstalk::Pool.new([url])
     worker    = XapianDb::IndexWriters::BeanstalkWorker.new
+    beanstalk.watch XapianDb::Config.beanstalk_tube
     puts DEPRECATION_WARNING
     puts "XapianDb beanstalk worker is serving on #{url}..."
     loop do
