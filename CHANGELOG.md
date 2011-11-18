@@ -1,3 +1,47 @@
+##1.2.2 (November 15th, 2011)
+
+Features:
+
+  - resultset accepts limit and paging options as strings
+  - added natural sort order option for blueprints (see README for details)
+
+IMPORTANT: FULL INDEX REBUILD REQUIRED FOR THIS RELEASE!
+
+##1.2.1.1 (November 10th, 2011)
+
+Fixes:
+
+  - resque writer wasn't loaded when beanstalk wasn't installed (thanks, javierv)
+
+##1.2.1 (November 9th, 2011)
+
+Fixes:
+
+  - removed explicit dependency on resque
+
+##1.2.0 (November 8th, 2011)
+
+Fixes:
+
+  - find_similar_to supports the :limit option
+
+Features:
+
+  - new index worker / writer for resque (thanks, Michael)
+  - support for namespaced models (thanks, Albert)
+
+##1.1.4 (October 25th, 2011)
+
+Fixes:
+
+  - removed loading of the deprecated rake task from the railtie
+
+##1.1.3 (October 24th, 2011)
+
+Fixes:
+
+  - weight option for attributes and indexed values was not correctly applied
+
 ##1.1.2 (September 10th, 2011)
 
 Fixes:

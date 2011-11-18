@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 
 module XapianDb
 
@@ -51,13 +51,17 @@ module XapianDb
         return default_tube if @config.nil?
         @config.instance_variable_get("@_beanstalk_tube") || default_tube
       end
+
+      def resque_queue
+        @config.instance_variable_get("@_resque_queue") || 'xapian_db'
+      end
     end
 
     # ---------------------------------------------------------------------------------
     # DSL methods
     # ---------------------------------------------------------------------------------
 
-    attr_reader :_database, :_adapter, :_writer, :_beanstalk_daemon, :_stemmer, :_stopper, :_beanstalk_tube
+    attr_reader :_database, :_adapter, :_writer, :_beanstalk_daemon, :_beanstalk_tube, :_resque_queue, :_stemmer, :_stopper
 
     # Set the global database to use
     # @param [String] path The path to the database. Either apply a file sytem path or :memory
@@ -105,6 +109,12 @@ module XapianDb
     # @param [Symbol] url The url of the beanstalk daemon; defaults to localhost:11300
     def beanstalk_daemon_url(url)
       @_beanstalk_daemon_url = url
+    end
+
+    # Set the name of the resque queue
+    # @param [String] name The name of the resque queue
+    def resque_queue(name)
+      @_resque_queue = name
     end
 
     # Set the language.

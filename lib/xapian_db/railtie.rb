@@ -9,11 +9,6 @@ module XapianDb
   # @author Gernot Kogler
   class Railtie < ::Rails::Railtie
 
-    # require our rake tasks
-    rake_tasks do
-      load "#{File.dirname(__FILE__)}/../../tasks/beanstalk_worker.rake"
-    end
-
     # require our generators
     generators do
       require "#{File.dirname(__FILE__)}/../generators/install_generator.rb"
@@ -43,6 +38,7 @@ module XapianDb
         config.writer @writer.try(:to_sym)
         config.beanstalk_daemon_url @beanstalk_daemon
         config.beanstalk_tube = @beanstalk_tube
+        config.resque_queue @resque_queue
         config.language @language.try(:to_sym)
       end
 
@@ -64,6 +60,7 @@ module XapianDb
       @writer           = env_config["writer"]   || :direct
       @beanstalk_daemon = env_config["beanstalk_daemon"]
       @beanstalk_tube   = env_config["beanstalk_tube"]
+      @resque_queue     = env_config["resque_queue"]
       @language         = env_config["language"]
     end
 

@@ -161,14 +161,15 @@ describe XapianDb::DocumentBlueprint do
         blueprint.attribute :id
         blueprint.attribute :name
       end
+      @position_offset = 2 # slots 0 and 1 are reserved
     end
 
     it "returns the value number of an indexed method" do
-      XapianDb::DocumentBlueprint.value_number_for(:name).should == 2
+      XapianDb::DocumentBlueprint.value_number_for(:name).should == @position_offset + 1
     end
 
     it "accepts a string as an argument" do
-      XapianDb::DocumentBlueprint.value_number_for("name").should == 2
+      XapianDb::DocumentBlueprint.value_number_for("name").should == @position_offset + 1
     end
 
     it "raises an argument error if the method is not indexed" do
@@ -187,7 +188,7 @@ describe XapianDb::DocumentBlueprint do
         blueprint.index :not_in_alphabetical_order
         blueprint.index :name
       end
-      XapianDb::DocumentBlueprint.value_number_for(:name).should == 2
+      XapianDb::DocumentBlueprint.value_number_for(:name).should == @position_offset + 1
     end
 
     it "returns 0 for :indexed_class" do
@@ -202,7 +203,7 @@ describe XapianDb::DocumentBlueprint do
         blueprint.attribute :name
         blueprint.attribute :array
       end
-      XapianDb::DocumentBlueprint.value_number_for(:array).should == 1
+      XapianDb::DocumentBlueprint.value_number_for(:array).should == @position_offset
     end
 
   end
@@ -396,6 +397,40 @@ describe XapianDb::DocumentBlueprint do
       end
       @blueprint = XapianDb::DocumentBlueprint.blueprint_for(IndexedObject)
     end
+  end
+
+  describe "#natural_sort_order" do
+
+    it "defaults to id if not specified" do
+      XapianDb::DocumentBlueprint.setup(IndexedObject) do |blueprint|
+      end
+      XapianDb::DocumentBlueprint.blueprint_for(IndexedObject)._natural_sort_order.should == :id
+    end
+
+    it "accepts a method symbol" do
+      XapianDb::DocumentBlueprint.setup(IndexedObject) do |blueprint|
+        blueprint.natural_sort_order :name
+      end
+      XapianDb::DocumentBlueprint.blueprint_for(IndexedObject)._natural_sort_order.should == :name
+    end
+
+    it "accepts a block" do
+      XapianDb::DocumentBlueprint.setup(IndexedObject) do |blueprint|
+        blueprint.natural_sort_order do
+          @id
+        end
+      end
+      XapianDb::DocumentBlueprint.blueprint_for(IndexedObject)._natural_sort_order.should be_a Proc
+    end
+
+    it "raises an ArgumentError, if a method name AND a block are given" do
+      lambda { XapianDb::DocumentBlueprint.setup(IndexedObject) do |blueprint|
+        blueprint.natural_sort_order :name do
+          @id
+        end
+      end }.should raise_error ArgumentError
+    end
+
   end
 
 

@@ -9,7 +9,7 @@
 require 'xapian'
 require 'yaml'
 
-do_not_require = %w(update_stopwords.rb railtie.rb base_adapter.rb beanstalk_writer.rb utilities.rb install_generator.rb)
+do_not_require = %w(update_stopwords.rb railtie.rb base_adapter.rb beanstalk_writer.rb resque_writer.rb utilities.rb install_generator.rb)
 files = Dir.glob("#{File.dirname(__FILE__)}/**/*.rb").reject{|path| do_not_require.include?(File.basename(path))}
 # Require these first
 require "#{File.dirname(__FILE__)}/xapian_db/utilities"
@@ -22,6 +22,12 @@ require File.dirname(__FILE__) + '/xapian_db/railtie' if defined?(Rails)
 # Try to require the beanstalk writer (depends on beanstalk-client)
 begin
   require File.dirname(__FILE__) + '/xapian_db/index_writers/beanstalk_writer'
+rescue LoadError
+end
+
+# Try to require the resque writer (depends on resque)
+begin
+  require File.dirname(__FILE__) + '/xapian_db/index_writers/resque_writer'
 rescue LoadError
 end
 
@@ -168,7 +174,7 @@ module XapianDb
 
   # Execute a block and do not update the index
   def self.auto_indexing_disabled(&block)
-    execute_block :writer => XapianDb::IndexWriters::NoOpWriter.new do
+    execute_block :writer => XapianDb::IndexWriters::NoOpWriter do
       block.call
     end
 

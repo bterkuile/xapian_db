@@ -74,12 +74,13 @@ module XapianDb
       # @param [attribute] The name of an attribute
       # @return [Integer] The value number
       def value_number_for(attribute)
-        raise ArgumentError.new "attribute #{attribute} is not configured in any blueprint" if @attributes.nil?
         return 0 if attribute.to_sym == :indexed_class
+        return 1 if attribute.to_sym == :natural_sort_order
+        raise ArgumentError.new "attribute #{attribute} is not configured in any blueprint" if @attributes.nil?
         position = @attributes.index attribute.to_sym
         if position
-          # We add 1 because value slot 0 is reserved for the class name
-          return position + 1
+          # We add 2 because slot 0 and 1 are reserved for indexed_class and natural_sort_order
+          return position + 2
         else
           raise ArgumentError.new "attribute #{attribute} is not configured in any blueprint"
         end
@@ -206,13 +207,14 @@ module XapianDb
     # ---------------------------------------------------------------------------------
 
     attr_accessor :_adapter
-    attr_reader :_base_query
+    attr_reader :_base_query, :_natural_sort_order
 
     # Construct the blueprint
     def initialize
-      @attributes_hash =      {}
+      @attributes_hash      = {}
       @indexed_methods_hash = {}
-      @type_map =             {}
+      @type_map             = {}
+      @_natural_sort_order  = :id
     end
 
     # Set the adapter
@@ -314,6 +316,15 @@ module XapianDb
     #   blueprint.base_query Person.includes(:addresses)
     def base_query(expression)
       @_base_query = expression
+    end
+
+    # Define the natural sort order.
+    # @param [String] name The name of the method that delivers the sort expression
+    # @param [Block] &block An optional block for complex configurations
+    # Pass a method name or a block, but not both
+    def natural_sort_order(name=nil, &block)
+      raise ArgumentError.new("natural_sort_order accepts a method name or a block, but not both") if name && block
+      @_natural_sort_order = name || block
     end
 
     # Options for an indexed method

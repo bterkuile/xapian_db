@@ -143,8 +143,23 @@ If you use associations in your blueprints, it might be a good idea to specify a
     blueprint.base_query Person.includes(:addresses)
   end
 
-place these configurations either into the corresponding class or - I prefer to have the index configurations outside
+You can specify a natural sort order for each class using a method symbol or a block. If you don't specify an order expression in your xapian query, the matches
+are ordered by relevance and - within the same relevance - by the natural sort order. If you don't specify the natural sort order, it defaults to id. Examples:
+
+  XapianDb::DocumentBlueprint.setup(House) do |blueprint|
+    blueprint.natural_sort_order :number
+  end
+
+  XapianDb::DocumentBlueprint.setup(Person) do |blueprint|
+    blueprint.natural_sort_order do
+      "#{surname} #{name}"
+    end
+  end
+
+Place these configurations either into the corresponding class or - I prefer to have the index configurations outside
 the models - into the file config/xapian_blueprints.rb.
+
+IMPORTANT: Do not place them into an initializer, this will not work when cache_classes is set to false (default in config/development.rb).
 
 === Update the index
 
@@ -329,7 +344,9 @@ However, dates need special handling to support date range queries. To support d
 
 Since Xapian allows only one database instance to write to the index, the default setup of XapianDb will not work
 with multiple app instances trying to write to the same database (you will get lock errors).
-Therefore, XapianDb provides a solution based on beanstalk to overcome this.
+Therefore, XapianDb provides two solutions based on queueing systems to overcome this. The first solution uses beanstalk and the second one uses resque.
+
+== Installation with beanstalk
 
 === 1. Install beanstalkd
 
@@ -387,3 +404,32 @@ If everything is fine, you should find a file namend beanstalk_worker.pid in tmp
 goes wrong, you'll find beanstalk_worker.log instead showing the stack trace.
 
 <b>Important: Do not start multiple instances of this daemon!</b>
+
+== Installation with Resque
+
+=== 1. Install and start redis
+
+Install and start redis as described on the {resque github page}[https://github.com/defunkt/resque].
+
+=== 2. Add the resque gem to your config
+
+  gem 'resque'
+  bundle install
+
+=== 3. Configure XapianDb to use resque in production
+
+  production:
+    database:     db/xapian_db/production
+    writer:       resque
+    resque_queue: my_queue
+
+If you don't specify a queue name XapianDb will use 'xapian_db' by default.
+
+=== 4. Start the resque worker
+
+   RAILS_ENV=production QUEUE=my_queue rake resque:work
+
+Be sure to specify the correct queue name when starting the worker.
+
+<b>If you don't provide a queue name, it WON'T take 'xapian_db' by default! Do not start multiple
+instances of this worker!</b>
