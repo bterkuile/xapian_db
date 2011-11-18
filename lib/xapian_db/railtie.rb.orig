@@ -37,8 +37,11 @@ module XapianDb
         config.adapter @adapter.try(:to_sym)
         config.writer @writer.try(:to_sym)
         config.beanstalk_daemon_url @beanstalk_daemon
-        config.beanstalk_tube @beanstalk_tube
+<<<<<<< HEAD
+        config.beanstalk_tube = @beanstalk_tube
+=======
         config.resque_queue @resque_queue
+>>>>>>> 2516d39772447b6d7f33d1f3fd426404c912eea5
         config.language @language.try(:to_sym)
       end
 
@@ -59,8 +62,11 @@ module XapianDb
       @adapter          = env_config["adapter"]  || :active_record
       @writer           = env_config["writer"]   || :direct
       @beanstalk_daemon = env_config["beanstalk_daemon"]
+<<<<<<< HEAD
       @beanstalk_tube   = env_config["beanstalk_tube"]
+=======
       @resque_queue     = env_config["resque_queue"]
+>>>>>>> 2516d39772447b6d7f33d1f3fd426404c912eea5
       @language         = env_config["language"]
     end
 
