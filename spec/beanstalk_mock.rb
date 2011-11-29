@@ -17,5 +17,9 @@ module Beanstalk
       worker.send task, params
     end
 
+    def use(tube)
+
+    end
+
   end
 end

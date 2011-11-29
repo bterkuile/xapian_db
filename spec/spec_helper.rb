@@ -9,6 +9,8 @@ SimpleCov.start do
 end
 
 require File.dirname(__FILE__) + '/../lib/xapian_db'
+require File.dirname(__FILE__) + '/../lib/xapian_db/index_writers/beanstalk_writer.rb'
+require File.dirname(__FILE__) + '/../lib/xapian_db/index_writers/resque_writer.rb'
 require File.dirname(__FILE__) + '/basic_mocks'
 require File.dirname(__FILE__) + '/orm_mocks'
 require File.dirname(__FILE__) + '/beanstalk_mock'

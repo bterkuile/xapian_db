@@ -60,7 +60,7 @@ module XapianDb
     #   resultset = db.search("name:foo")
     # @return [XapianDb::Resultset] The resultset
     def search(expression, options={})
-      opts          = {:sort_decending => false}.merge(options)
+      opts          = {:sort_decending => false, :query => expression}.merge(options)
       @query_parser ||= QueryParser.new(self)
       query         = @query_parser.parse(expression)
 

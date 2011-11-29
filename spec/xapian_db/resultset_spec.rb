@@ -164,4 +164,10 @@ describe XapianDb::Resultset do
     end
   end
 
+  describe ".query" do
+    it "should contain the query given as an option" do
+      resultset = XapianDb::Resultset.new(@enquiry, :db_size => @matches.size, :per_page => 2, :page => 1, :query => 'test*')
+      resultset.query.should == 'test*'
+    end
+  end
 end

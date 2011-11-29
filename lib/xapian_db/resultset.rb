@@ -39,6 +39,9 @@ module XapianDb
     # The number of records per page
     attr_reader :limit_value
 
+    # The query given to obtain the resultset
+    attr_reader :query
+
     # Constructor
     # @param [Xapian::Enquire] enquiry a Xapian query result (see http://xapian.org/docs/apidoc/html/classXapian_1_1Enquire.html).
     #   Pass nil to get an empty result set.
@@ -48,12 +51,14 @@ module XapianDb
     # @option options [Integer] :page (1) The page number to retrieve
     # @option options [Integer] :per_page (10) How many docs per page? Ignored if a limit option is given
     # @option options [String] :spelling_suggestion (nil) The spelling corrected query (if a language is configured)
+    # @option options [String] :query The query given to obtain the resultset
     def initialize(enquiry, options={})
 
       enquiry = enquiry
-      return build_empty_resultset if enquiry.nil?
+      return build_empty_resultset(options) if enquiry.nil?
       db_size              = options.delete :db_size
       @spelling_suggestion = options.delete :spelling_suggestion
+      @query               = options.delete :query
       @hits                = enquiry.mset(0, db_size).matches_estimated
       return build_empty_resultset if @hits == 0
 
@@ -90,11 +95,12 @@ module XapianDb
     end
 
     # Build an empty resultset
-    def build_empty_resultset
+    def build_empty_resultset(options = {})
       @hits         = 0
       @total_pages  = 0
       @current_page = 0
       @limit_value  = 0
+      @query        = options.delete(:query)
       self
     end
 

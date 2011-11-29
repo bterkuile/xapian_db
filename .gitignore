@@ -8,6 +8,7 @@ Gemfile.lock
 *.sublime-workspace
 *.orig
 doc
+*.swp
 .yardoc
 examples/basic_rails/db/xapian_db
 examples/basic_rails/db/*.sqlite3
