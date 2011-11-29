@@ -1,3 +1,17 @@
+##1.2.2.2 (November 29th, 2011)
+
+Changes:
+
+- removed dependency to xapian-ruby to allow custom installs of the xapian binaries (see chapter Installing xapian binaries in the README)
+
+##1.2.2.1 (November 22th, 2011)
+
+Fixes:
+
+  - always use the correct table name for order clauses when indexing
+  - allow nil values for attributes declared :as => :date
+  - lazy load queue writers (beanstalk_writer, resque_writer) when needed
+
 ##1.2.2 (November 15th, 2011)
 
 Features:
