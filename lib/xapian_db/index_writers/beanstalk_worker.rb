@@ -25,6 +25,10 @@ module XapianDb
         DirectWriter.reindex_class klass, :verbose => false
       end
 
+      def reindex_all_task(options)
+        XapianDb.rebuild_xapian_index
+      end
+
     end
   end
 end

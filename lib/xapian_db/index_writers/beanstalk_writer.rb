@@ -36,6 +36,11 @@ module XapianDb
           beanstalk.put( { :task => "reindex_class_task", :class => klass.name }.to_yaml )
         end
 
+        def reindex_all( options = {} )
+          beanstalk.use tube
+          beanstalk.put( options.merge(:task => 'reindex_all_task').to_yaml )
+        end
+
         private
 
         def beanstalk
