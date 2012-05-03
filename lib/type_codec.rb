@@ -102,6 +102,7 @@ module XapianDb
       # @param [Integer, BigDecimal, Float] number a number object to encode
       # @return [String] the encoded number
       def self.encode(number)
+        return Xapian::sortable_serialise 0 unless number # allow nil values
         begin
           Xapian::sortable_serialise number
         rescue TypeError
